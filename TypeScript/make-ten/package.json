@@ -1,0 +1,24 @@
+{
+  "name": "make-ten",
+  "version": "1.0.0",
+  "main": "index.js",
+  "author": "Henry Lin",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc",
+    "start": "node ./index.js",
+    "lint": "eslint ./**/*.ts --fix"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^5.0.0",
+    "eslint": "^8.0.1",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-config-standard-with-typescript": "^23.0.0",
+    "eslint-plugin-import": "^2.25.2",
+    "eslint-plugin-n": "^15.0.0",
+    "eslint-plugin-promise": "^6.0.0",
+    "prettier": "^2.7.1",
+    "typescript": "*"
+  }
+}
