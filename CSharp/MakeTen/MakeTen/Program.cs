@@ -1,4 +1,4 @@
-﻿using NCalc;
+﻿using System.Data;
 
 string[] DIGITS = { "0", "1", "2", "3", "4", "5", "6", "7", "8", "9" };
 string[] OPERATORS = { "+", "-", "*", "/" };
@@ -140,6 +140,8 @@ search("non-distinct numbers", forEachNumber);
 
 struct Solution
 {
+    private static readonly DataTable dt = new ();
+    
     public string[] Numbers;
     public string[] Operators;
     public (int, int) Brackets;
@@ -160,6 +162,6 @@ struct Solution
 
     public double Calculate()
     {
-        return Convert.ToDouble(new Expression(ToExpression()).Evaluate());
+        return Convert.ToDouble(dt.Compute(ToExpression(), ""));
     }
 }
