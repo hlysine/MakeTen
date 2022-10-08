@@ -5,7 +5,7 @@
 using namespace std;
 
 const vector<char> DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-const vector<char> OPERATORS = {'+', '-', '*', '/'};
+const vector<char> SYMBOLS = {'+', '-', '*', '/'};
 
 enum Operator {
     Add,
@@ -71,7 +71,7 @@ double evaluate(const string& expr) {
     for (char ch: expr) {
         if (std::find(DIGITS.begin(), DIGITS.end(), ch) != DIGITS.end()) {
             operands.emplace_back(ch - '0');
-        } else if (std::find(OPERATORS.begin(), OPERATORS.end(), ch) != OPERATORS.end()) {
+        } else if (std::find(SYMBOLS.begin(), SYMBOLS.end(), ch) != SYMBOLS.end()) {
             operators.emplace_back(get_op(ch, in_bracket));
         } else if (ch == '(') {
             in_bracket = true;
@@ -191,9 +191,9 @@ bool for_each_num_shuffle(Solution* base_sol, const function<bool(Solution*)>& c
 }
 
 bool for_each_op(Solution* base_sol, const function<bool(Solution*)>& callback) {
-    for (const auto& op1: OPERATORS) {
-        for (const auto& op2: OPERATORS) {
-            for (const auto& op3: OPERATORS) {
+    for (const auto& op1: SYMBOLS) {
+        for (const auto& op2: SYMBOLS) {
+            for (const auto& op3: SYMBOLS) {
                 base_sol->operators = {op1, op2, op3};
                 if (callback(base_sol)) return true;
             }

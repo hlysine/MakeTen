@@ -14,7 +14,7 @@ import java.util.function.Predicate;
  */
 public class App {
     static final String[] DIGITS = new String[]{"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
-    static final String[] OPERATORS = new String[]{"+", "-", "*", "/"};
+    static final String[] SYMBOLS = new String[]{"+", "-", "*", "/"};
 
     public static class Solution {
         public static final DoubleEvaluator evaluator = new DoubleEvaluator();
@@ -93,9 +93,9 @@ public class App {
     }
 
     static boolean forEachOperator(Solution baseSolution, Predicate<Solution> callback) {
-        for (String operator1 : OPERATORS) {
-            for (String operator2 : OPERATORS) {
-                for (String operator3 : OPERATORS) {
+        for (String operator1 : SYMBOLS) {
+            for (String operator2 : SYMBOLS) {
+                for (String operator3 : SYMBOLS) {
                     baseSolution.Operators = new String[]{operator1, operator2, operator3};
                     if (callback.test(baseSolution)) return true;
                 }

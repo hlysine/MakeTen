@@ -1,7 +1,7 @@
 use fasteval::{ez_eval, EmptyNamespace};
 
 const DIGITS: &'static [&'static str] = &["0", "1", "2", "3", "4", "5", "6", "7", "8", "9"];
-const OPERATORS: &'static [&'static str] = &["+", "-", "*", "/"];
+const SYMBOLS: &'static [&'static str] = &["+", "-", "*", "/"];
 
 #[derive(Clone)]
 struct Solution {
@@ -128,9 +128,9 @@ fn for_each_num_shuffle(base_sol: &Solution, callback: &mut impl FnMut(&Solution
 }
 
 fn for_each_op(base_sol: &Solution, callback: &mut impl FnMut(&Solution) -> bool) -> bool {
-    for op1 in OPERATORS {
-        for op2 in OPERATORS {
-            for op3 in OPERATORS {
+    for op1 in SYMBOLS {
+        for op2 in SYMBOLS {
+            for op3 in SYMBOLS {
                 let new_sol = Solution {
                     operators: vec![op1.to_string(), op2.to_string(), op3.to_string()],
                     ..base_sol.clone()

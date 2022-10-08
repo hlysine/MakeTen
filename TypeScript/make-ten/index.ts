@@ -1,5 +1,5 @@
 const DIGITS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
-const OPERATORS = ['+', '-', '*', '/'];
+const SYMBOLS = ['+', '-', '*', '/'];
 
 enum Operator {
   Add,
@@ -67,7 +67,7 @@ function evaluate(expression: string): number {
   for (const char of expression) {
     if (DIGITS.includes(char)) {
       operands.push(Number(char));
-    } else if (OPERATORS.includes(char)) {
+    } else if (SYMBOLS.includes(char)) {
       operators.push(getOperator(char, inBracket));
     } else if (char === '(') {
       inBracket = true;
@@ -205,9 +205,9 @@ function forEachOperator(
   baseSolution: Solution,
   callback: IteratorBody
 ): boolean {
-  for (const operator1 of OPERATORS) {
-    for (const operator2 of OPERATORS) {
-      for (const operator3 of OPERATORS) {
+  for (const operator1 of SYMBOLS) {
+    for (const operator2 of SYMBOLS) {
+      for (const operator3 of SYMBOLS) {
         baseSolution.operators = [operator1, operator2, operator3];
         if (callback(baseSolution)) return true;
       }
