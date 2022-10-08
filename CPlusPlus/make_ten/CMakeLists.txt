@@ -3,4 +3,4 @@ project(make_ten)
 
 set(CMAKE_CXX_STANDARD 23)
 
-add_executable(make_ten main.cpp lib/tinyexpr.c)
+add_executable(make_ten main.cpp)
