@@ -113,13 +113,13 @@ class Solution {
   operators: string[];
   brackets: [number, number];
 
-  constructor() {
+  public constructor() {
     this.numbers = [];
     this.operators = [];
     this.brackets = [0, 0];
   }
 
-  toExpression(): string {
+  private toExpression(): string {
     let expression = '';
     for (let i = 0; i < this.numbers.length; i++) {
       if (this.brackets[0] === i) expression += '(';
@@ -130,7 +130,7 @@ class Solution {
     return expression;
   }
 
-  calculate(): number {
+  public calculate(): number {
     return evaluate(this.toExpression());
   }
 }
