@@ -4,8 +4,8 @@
 
 using namespace std;
 
-vector<char> DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
-vector<char> OPERATORS = {'+', '-', '*', '/'};
+const vector<char> DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+const vector<char> OPERATORS = {'+', '-', '*', '/'};
 
 enum Operator {
     Add,
@@ -112,11 +112,7 @@ double evaluate(const string& expr) {
 }
 
 class Solution {
-public:
-    vector<char> numbers;
-    vector<char> operators;
-    pair<int, int> brackets;
-
+private:
     [[nodiscard]] string to_expr() const {
         string expr;
         for (int i = 0; i < numbers.size(); i++) {
@@ -133,6 +129,11 @@ public:
         }
         return expr;
     }
+
+public:
+    vector<char> numbers;
+    vector<char> operators;
+    pair<int, int> brackets;
 
     [[nodiscard]] double calculate() const {
         return evaluate(to_expr());
