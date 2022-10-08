@@ -1,29 +1,144 @@
 const DIGITS = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'];
 const OPERATORS = ['+', '-', '*', '/'];
 
-interface Solution {
+enum Operator {
+  Add,
+  Subtract,
+  Multiply,
+  Divide,
+  BracketAdd,
+  BracketSubtract,
+  BracketMultiply,
+  BracketDivide,
+}
+
+function getOperator(char: string, inBracket: boolean): Operator {
+  switch (char) {
+    case '+':
+      return inBracket ? Operator.BracketAdd : Operator.Add;
+    case '-':
+      return inBracket ? Operator.BracketSubtract : Operator.Subtract;
+    case '*':
+      return inBracket ? Operator.BracketMultiply : Operator.Multiply;
+    case '/':
+      return inBracket ? Operator.BracketDivide : Operator.Divide;
+    default:
+      throw new Error(`Unknown operator: ${char}`);
+  }
+}
+
+function evaluateOperation(
+  operands: number[],
+  operators: Operator[],
+  index: number
+): void {
+  const operator = operators[index];
+  const operand1 = operands[index];
+  const operand2 = operands[index + 1];
+
+  switch (operator) {
+    case Operator.Add:
+    case Operator.BracketAdd:
+      operands[index] = operand1 + operand2;
+      break;
+    case Operator.Subtract:
+    case Operator.BracketSubtract:
+      operands[index] = operand1 - operand2;
+      break;
+    case Operator.Multiply:
+    case Operator.BracketMultiply:
+      operands[index] = operand1 * operand2;
+      break;
+    case Operator.Divide:
+    case Operator.BracketDivide:
+      operands[index] = operand1 / operand2;
+      break;
+  }
+
+  operands.splice(index + 1, 1);
+  operators.splice(index, 1);
+}
+
+function evaluate(expression: string): number {
+  let inBracket = false;
+  const operands: number[] = [];
+  const operators: Operator[] = [];
+
+  for (let i = 0; i < expression.length; i++) {
+    const char = expression[i];
+    if (DIGITS.includes(char)) {
+      const operand = Number(char);
+      operands.push(operand);
+    } else if (OPERATORS.includes(char)) {
+      const operator = getOperator(char, inBracket);
+      operators.push(operator);
+    } else if (char === '(') {
+      inBracket = true;
+    } else if (char === ')') {
+      inBracket = false;
+    }
+  }
+
+  while (operators.length > 0) {
+    let index = operators.findIndex(
+      operator =>
+        operator === Operator.BracketMultiply ||
+        operator === Operator.BracketDivide
+    );
+    if (index === -1)
+      index = operators.findIndex(
+        operator =>
+          operator === Operator.BracketAdd ||
+          operator === Operator.BracketSubtract
+      );
+    if (index === -1)
+      index = operators.findIndex(
+        operator =>
+          operator === Operator.Multiply || operator === Operator.Divide
+      );
+    if (index === -1)
+      index = operators.findIndex(
+        operator => operator === Operator.Add || operator === Operator.Subtract
+      );
+
+    if (index !== -1) {
+      evaluateOperation(operands, operators, index);
+    } else {
+      throw new Error('Invalid expression');
+    }
+  }
+
+  return operands[0];
+}
+
+class Solution {
   numbers: string[];
   operators: string[];
   brackets: [number, number];
+
+  constructor() {
+    this.numbers = [];
+    this.operators = [];
+    this.brackets = [0, 0];
+  }
+
+  toExpression(): string {
+    let expression = '';
+    for (let i = 0; i < this.numbers.length; i++) {
+      if (this.brackets[0] === i) expression += '(';
+      expression += this.numbers[i];
+      if (this.brackets[1] === i) expression += ')';
+      if (i < this.operators.length) expression += this.operators[i];
+    }
+    return expression;
+  }
+
+  calculate(): number {
+    return evaluate(this.toExpression());
+  }
 }
 
 type IteratorBody = (solution: Solution) => boolean;
-
-function toExpression(solution: Solution): string {
-  let expression = '';
-  for (let i = 0; i < solution.numbers.length; i++) {
-    if (solution.brackets[0] === i) expression += '(';
-    expression += solution.numbers[i];
-    if (solution.brackets[1] === i) expression += ')';
-    if (i < solution.operators.length) expression += solution.operators[i];
-  }
-  return expression;
-}
-
-function calculate(solution: Solution): number {
-  // eslint-disable-next-line no-eval
-  return eval(toExpression(solution));
-}
 
 function forEachNumber(
   baseSolution: Solution,
@@ -123,11 +238,7 @@ function search(
   title: string,
   numberIterator: (solution: Solution, callback: IteratorBody) => boolean
 ): void {
-  const solution: Solution = {
-    numbers: [],
-    operators: [],
-    brackets: [0, 0],
-  };
+  const solution = new Solution();
 
   const impossibleCombinations: string[][] = [];
 
@@ -135,8 +246,7 @@ function search(
     const isPossible = forEachNumberShuffle(solution1, solution2 => {
       return forEachOperator(solution2, solution3 => {
         return forEachBracket(solution3, solution4 => {
-          const result = calculate(solution4);
-          return result === 10;
+          return solution4.calculate() === 10;
         });
       });
     });
