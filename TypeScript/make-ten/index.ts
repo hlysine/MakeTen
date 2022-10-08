@@ -64,14 +64,11 @@ function evaluate(expression: string): number {
   const operands: number[] = [];
   const operators: Operator[] = [];
 
-  for (let i = 0; i < expression.length; i++) {
-    const char = expression[i];
+  for (const char of expression) {
     if (DIGITS.includes(char)) {
-      const operand = Number(char);
-      operands.push(operand);
+      operands.push(Number(char));
     } else if (OPERATORS.includes(char)) {
-      const operator = getOperator(char, inBracket);
-      operators.push(operator);
+      operators.push(getOperator(char, inBracket));
     } else if (char === '(') {
       inBracket = true;
     } else if (char === ')') {
