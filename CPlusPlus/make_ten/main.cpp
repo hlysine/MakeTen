@@ -1,17 +1,120 @@
 #include <iostream>
 #include <vector>
 #include <functional>
-#include "lib/tinyexpr.h"
 
 using namespace std;
 
-vector<string> DIGITS = {"0", "1", "2", "3", "4", "5", "6", "7", "8", "9"};
-vector<string> OPERATORS = {"+", "-", "*", "/"};
+vector<char> DIGITS = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
+vector<char> OPERATORS = {'+', '-', '*', '/'};
+
+enum Operator {
+    Add,
+    Subtract,
+    Multiply,
+    Divide,
+    BracketAdd,
+    BracketSubtract,
+    BracketMultiply,
+    BracketDivide,
+};
+
+Operator get_op(char ch, bool in_bracket) {
+    switch (ch) {
+        case '+':
+            return in_bracket ? BracketAdd : Add;
+        case '-':
+            return in_bracket ? BracketSubtract : Subtract;
+        case '*':
+            return in_bracket ? BracketMultiply : Multiply;
+        case '/':
+            return in_bracket ? BracketDivide : Divide;
+        default:
+            auto msg = string("Unknown operator: ");
+            msg.push_back(ch);
+            throw invalid_argument(msg);
+    }
+}
+
+void evaluate_op(vector<double>* operands, vector<Operator>* operators, long long index) {
+    auto op = (*operators)[index];
+    auto operand1 = (*operands)[index];
+    auto operand2 = (*operands)[index + 1];
+
+    switch (op) {
+        case Add:
+        case BracketAdd:
+            (*operands)[index] = operand1 + operand2;
+            break;
+        case Subtract:
+        case BracketSubtract:
+            (*operands)[index] = operand1 - operand2;
+            break;
+        case Multiply:
+        case BracketMultiply:
+            (*operands)[index] = operand1 * operand2;
+            break;
+        case Divide:
+        case BracketDivide:
+            (*operands)[index] = operand1 / operand2;
+            break;
+    }
+
+    operands->erase(operands->begin() + index + 1);
+    operators->erase(operators->begin() + index);
+}
+
+double evaluate(const string& expr) {
+    auto in_bracket = false;
+    vector<double> operands;
+    vector<Operator> operators;
+
+    for (char ch: expr) {
+        if (std::find(DIGITS.begin(), DIGITS.end(), ch) != DIGITS.end()) {
+            operands.emplace_back(ch - '0');
+        } else if (std::find(OPERATORS.begin(), OPERATORS.end(), ch) != OPERATORS.end()) {
+            operators.emplace_back(get_op(ch, in_bracket));
+        } else if (ch == '(') {
+            in_bracket = true;
+        } else if (ch == ')') {
+            in_bracket = false;
+        }
+    }
+
+    while (!operators.empty()) {
+        auto index = min(
+                std::find(operators.begin(), operators.end(), BracketMultiply) - operators.begin(),
+                std::find(operators.begin(), operators.end(), BracketDivide) - operators.begin()
+        );
+        if (index == operators.size())
+            index = min(
+                    std::find(operators.begin(), operators.end(), BracketAdd) - operators.begin(),
+                    std::find(operators.begin(), operators.end(), BracketSubtract) - operators.begin()
+            );
+        if (index == operators.size())
+            index = min(
+                    std::find(operators.begin(), operators.end(), Multiply) - operators.begin(),
+                    std::find(operators.begin(), operators.end(), Divide) - operators.begin()
+            );
+        if (index == operators.size())
+            index = min(
+                    std::find(operators.begin(), operators.end(), Add) - operators.begin(),
+                    std::find(operators.begin(), operators.end(), Subtract) - operators.begin()
+            );
+
+        if (index != operators.size()) {
+            evaluate_op(&operands, &operators, index);
+        } else {
+            throw invalid_argument("Invalid expression");
+        }
+    }
+
+    return operands[0];
+}
 
 class Solution {
 public:
-    vector<string> numbers;
-    vector<string> operators;
+    vector<char> numbers;
+    vector<char> operators;
     pair<int, int> brackets;
 
     [[nodiscard]] string to_expr() const {
@@ -32,7 +135,7 @@ public:
     }
 
     [[nodiscard]] double calculate() const {
-        return te_interp(to_expr().c_str(), nullptr);
+        return evaluate(to_expr());
     }
 };
 
@@ -111,13 +214,13 @@ bool for_each_bracket(Solution* base_sol, const function<bool(Solution*)>& callb
 void search(const string& title, bool (* num_iter)(Solution*, const function<bool(Solution*)>&)) {
     auto* solution = new Solution();
 
-    vector<vector<string>> impossible_nums;
+    vector<vector<char>> impossible_nums;
 
     num_iter(solution, [&impossible_nums](Solution* sol1) {
         bool possible = for_each_num_shuffle(sol1, [](Solution* sol2) -> bool {
             return for_each_op(sol2, [](Solution* sol3) -> bool {
                 return for_each_bracket(sol3, [](Solution* sol4) -> bool {
-                    return sol4->calculate() == 10;
+                    return abs(sol4->calculate() - 10) < 0.000001;
                 });
             });
         });
