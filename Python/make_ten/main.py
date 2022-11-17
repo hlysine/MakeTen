@@ -43,7 +43,8 @@ def eval_operation(operands: list[float], operators: list[Operator], index: int)
         case Operator.Multiply | Operator.BracketMultiply:
             operands[index] = operand1 * operand2
         case Operator.Divide | Operator.BracketDivide:
-            operands[index] = operand1 / operand2 if operand2 != 0 else float('nan')
+            operands[index] = operand1 / operand2 \
+                if operand2 != 0 else float('nan')
 
     del operands[index + 1]
     del operators[index]
@@ -66,22 +67,26 @@ def evaluate(expression: str) -> float:
 
     while len(operators) > 0:
         index = next(
-            (i for i in range(len(operators)) if operators[i] in [Operator.BracketMultiply, Operator.BracketDivide]),
+            (i for i in range(len(operators)) if operators[i] in [
+             Operator.BracketMultiply, Operator.BracketDivide]),
             None
         )
         if index is None:
             index = next(
-                (i for i in range(len(operators)) if operators[i] in [Operator.BracketAdd, Operator.BracketSubtract]),
+                (i for i in range(len(operators)) if operators[i] in [
+                 Operator.BracketAdd, Operator.BracketSubtract]),
                 None
             )
         if index is None:
             index = next(
-                (i for i in range(len(operators)) if operators[i] in [Operator.Multiply, Operator.Divide]),
+                (i for i in range(len(operators)) if operators[i] in [
+                 Operator.Multiply, Operator.Divide]),
                 None
             )
         if index is None:
             index = next(
-                (i for i in range(len(operators)) if operators[i] in [Operator.Add, Operator.Subtract]),
+                (i for i in range(len(operators)) if operators[i] in [
+                 Operator.Add, Operator.Subtract]),
                 None
             )
 
@@ -126,7 +131,8 @@ def for_each_num(base_solution: Solution, callback: IteratorBody) -> bool:
         for j in range(i, len(DIGITS)):
             for k in range(j, len(DIGITS)):
                 for m in range(k, len(DIGITS)):
-                    base_solution.numbers = [DIGITS[i], DIGITS[j], DIGITS[k], DIGITS[m]]
+                    base_solution.numbers = [
+                        DIGITS[i], DIGITS[j], DIGITS[k], DIGITS[m]]
                     if callback(base_solution):
                         return True
 
@@ -138,7 +144,8 @@ def for_each_distinct_num(base_solution: Solution, callback: IteratorBody) -> bo
         for j in range(i + 1, len(DIGITS)):
             for k in range(j + 1, len(DIGITS)):
                 for m in range(k + 1, len(DIGITS)):
-                    base_solution.numbers = [DIGITS[i], DIGITS[j], DIGITS[k], DIGITS[m]]
+                    base_solution.numbers = [
+                        DIGITS[i], DIGITS[j], DIGITS[k], DIGITS[m]]
                     if callback(base_solution):
                         return True
 
